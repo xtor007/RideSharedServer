@@ -9,7 +9,5 @@ func routes(_ app: Application) throws {
         "Hello, world!"
     }
     
-    app.post("singIn") { req async in
-        "good"
-    }
+    try app.register(collection: AuthController())
 }

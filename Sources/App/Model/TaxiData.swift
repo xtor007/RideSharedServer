@@ -6,7 +6,8 @@
 //
 
 import Foundation
+import Vapor
 
-struct TaxiData {
+struct TaxiData: Content {
     
 }

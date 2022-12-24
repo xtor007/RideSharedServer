@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import Vapor
 
-struct SelectionParametrs {
+struct SelectionParametrs: Content {
     var musicalPreferences: String?
     var musicalPrioritet: Int
     var driverGenderIndex: Int?
