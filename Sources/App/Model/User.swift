@@ -10,7 +10,7 @@ import Vapor
 
 struct User: Content {
     var name: String
-    var avatar: Data?
+    var avatar: String?
     var rating: Double
     var tripCount: Int
     var selectionParametrs: SelectionParametrs?

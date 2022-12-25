@@ -9,12 +9,16 @@ let package = Package(
     dependencies: [
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/jwt.git", from: "4.0.0"),
+        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", from: "7.0.0")
     ],
     targets: [
         .target(
             name: "App",
             dependencies: [
-                .product(name: "Vapor", package: "vapor")
+                .product(name: "Vapor", package: "vapor"),
+                .product(name: "JWT", package: "jwt"),
+                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of
