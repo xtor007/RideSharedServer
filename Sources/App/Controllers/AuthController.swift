@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import JWT
+import MongoKitten
 
 struct AuthController: RouteCollection {
     
@@ -18,8 +19,39 @@ struct AuthController: RouteCollection {
     
     func auth(req: Request) async throws -> User {
         let user = try await req.jwt.google.verify()
+        if let email = user.email, let name = user.name {
+            do {
+                let link = MongoDBManager(db: .users).connectionLink
+                let db = try await MongoDatabase.connect(
+                    to: link
+                )
+                let users = db[Database.UsersCollection.users.rawValue]
+                if let userDoc = try await users.findOne(Database.UsersCollection.UsersField.email.rawValue == email) {
+                    if let dbUser = User(document: userDoc) {
+                        return dbUser
+                    } else {
+                        print("error")
+                    }
+                } else {
+                    let newUser = User(
+                        name: name,
+                        email: email,
+                        avatar: user.picture,
+                        rating: 5.0,
+                        tripCount: 0
+                    )
+                    try await users.insert(newUser.getDocument())
+                    return newUser
+                }
+            } catch {
+                print(error)
+            }
+        } else {
+            print("error")
+        }
         return User(
-            name: user.name!,
+            name: "Error",
+            email: "t@a",
             avatar: user.picture,
             rating: 3.2,
             tripCount: 5

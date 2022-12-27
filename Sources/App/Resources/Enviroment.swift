@@ -8,5 +8,6 @@
 import Foundation
 
 enum Enviroment {
-    static let secretKey = "secretKey"
+    static let secretKey = ProcessInfo.processInfo.environment["secretKey"]!
+    static let mongoDBConnectionLink = ProcessInfo.processInfo.environment["mongoDBConnectionLink"]!
 }

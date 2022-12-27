@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "bson",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/orlandos-nl/BSON.git",
+      "state" : {
+        "revision" : "d93cb0bfc84f4566ab7a1004d38ad47deed21f22",
+        "version" : "8.0.5"
+      }
+    },
+    {
       "identity" : "console-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/console-kit.git",
@@ -82,12 +91,30 @@
       }
     },
     {
+      "identity" : "mongokitten",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/OpenKitten/MongoKitten.git",
+      "state" : {
+        "revision" : "5e889df5b653613f6241b4603fb867010ab94657",
+        "version" : "7.2.10"
+      }
+    },
+    {
       "identity" : "multipart-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/multipart-kit.git",
       "state" : {
         "revision" : "0d55c35e788451ee27222783c7d363cb88092fab",
         "version" : "4.5.2"
+      }
+    },
+    {
+      "identity" : "niodns",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/orlandos-nl/NioDNS.git",
+      "state" : {
+        "revision" : "c4a22908f5c936201b30abc608b3f2a46120ad2c",
+        "version" : "2.2.0"
       }
     },
     {
