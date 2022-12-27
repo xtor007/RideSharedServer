@@ -15,6 +15,7 @@ struct AuthController: RouteCollection {
     func boot(routes: Vapor.RoutesBuilder) throws {
         let authRoutes = routes.grouped("auth")
         authRoutes.post("signIn", use: auth)
+        authRoutes.post("updateUser", use: updateUser)
     }
     
     func auth(req: Request) async throws -> User {
@@ -47,8 +48,25 @@ struct AuthController: RouteCollection {
                 throw error
             }
         } else {
-            throw Abort(.badRequest, reason: "This accaunt haven't email and name")
+            throw Abort(.badRequest, reason: "This account haven't email or name")
         }
+    }
+    
+    func updateUser(req: Request) async throws -> HTTPStatus {
+        let tokenManager = TokenManager()
+        do {
+            let user = try tokenManager.getUser(fromReq: req)
+            let link = MongoDBManager(db: .users).connectionLink
+            let db = try await MongoDatabase.connect(
+                to: link
+            )
+            let users = db[Database.UsersCollection.users.rawValue]
+            try await users.deleteAll(where: Database.UsersCollection.UsersField.email.rawValue == user.email)
+            try await users.insert(user.getDocument())
+        } catch {
+            throw error
+        }
+        return .ok
     }
     
 }

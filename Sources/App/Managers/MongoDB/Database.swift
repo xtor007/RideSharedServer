@@ -21,6 +21,17 @@ enum Database: String {
             case avatar = "avatar"
             case rating = "rating"
             case tripCount = "tripCount"
+            case musicalPreferences = "musicalPreferences"
+            case musicalPrioritet = "musicalPrioritet"
+            case driverGenderIndex = "driverGenderIndex"
+            case genderPrioritet = "genderPrioritet"
+            case driverMinAge = "driverMinAge"
+            case driverMaxAge = "driverMaxAge"
+            case agePrioritet = "agePrioritet"
+            case speedIndex = "speedIndex"
+            case speedPrioritet = "speedPrioritet"
+            case carColorIndex = "carColorIndex"
+            case colorPrioritet = "colorPrioritet"
         }
         
     }
