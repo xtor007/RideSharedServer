@@ -30,7 +30,7 @@ struct AuthController: RouteCollection {
                     if let dbUser = User(document: userDoc) {
                         return dbUser
                     } else {
-                        print("error")
+                        throw Abort(.conflict)
                     }
                 } else {
                     let newUser = User(
@@ -44,18 +44,11 @@ struct AuthController: RouteCollection {
                     return newUser
                 }
             } catch {
-                print(error)
+                throw error
             }
         } else {
-            print("error")
+            throw Abort(.badRequest, reason: "This accaunt haven't email and name")
         }
-        return User(
-            name: "Error",
-            email: "t@a",
-            avatar: user.picture,
-            rating: 3.2,
-            tripCount: 5
-        )
     }
     
 }
