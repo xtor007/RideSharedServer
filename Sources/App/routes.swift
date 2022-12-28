@@ -1,4 +1,5 @@
 import Vapor
+import MongoKitten
 
 func routes(_ app: Application) throws {
     app.get { req async in
@@ -6,6 +7,8 @@ func routes(_ app: Application) throws {
     }
 
     app.get("hello") { req async -> String in
-        "Hello, world!"
+        return "Hello, world!"
     }
+    
+    try app.register(collection: AuthController())
 }
