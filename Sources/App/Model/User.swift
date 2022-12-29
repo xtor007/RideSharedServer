@@ -40,7 +40,8 @@ extension User {
             avatar: document[Database.UsersCollection.UsersField.avatar.rawValue] as? String,
             rating: rating,
             tripCount: tripCount,
-            selectionParametrs: SelectionParametrs(document: document)
+            selectionParametrs: SelectionParametrs(document: document),
+            taxiData: TaxiData(document: document)
         )
     }
     
@@ -54,7 +55,13 @@ extension User {
         document[Database.UsersCollection.UsersField.rating.rawValue] = rating
         document[Database.UsersCollection.UsersField.tripCount.rawValue] = tripCount
         if let selectionParametrs {
-            var documentArray = selectionParametrs.getDocumentDescription()
+            let documentArray = selectionParametrs.getDocumentDescription()
+            documentArray.forEach { key, value in
+                document[key] = value
+            }
+        }
+        if let taxiData {
+            let documentArray = taxiData.getDocumentDescription()
             documentArray.forEach { key, value in
                 document[key] = value
             }

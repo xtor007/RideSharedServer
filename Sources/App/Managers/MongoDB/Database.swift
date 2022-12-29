@@ -32,6 +32,13 @@ enum Database: String {
             case speedPrioritet = "speedPrioritet"
             case carColorIndex = "carColorIndex"
             case colorPrioritet = "colorPrioritet"
+            case isConfirmed = "isConfirmed"
+            case taxiTripCount = "taxiTripCount"
+            case musicRating = "musicRating"
+            case genderIndex = "genderIndex"
+            case dateOfBirth = "dateOfBirth"
+            case speedRating = "speedRating"
+            case yourCarColorIndex = "yourCarColorIndex"
         }
         
     }
