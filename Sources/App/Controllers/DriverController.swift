@@ -24,7 +24,13 @@ struct DriverController: RouteCollection {
             let user = try tokenManager.getUser(fromReq: req)
             let mailManager = MailManager()
             mailManager.sendConfirmedMail(user: user) { error in
-                print(error)
+                Task {
+                    try await updateDriverData(email: user.email) { user in
+                        var newUser = user
+                        newUser.taxiData = nil
+                        return newUser
+                    }
+                }
             }
         } catch {
             throw error
