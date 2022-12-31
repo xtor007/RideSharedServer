@@ -11,7 +11,8 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/jwt.git", from: "4.0.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", from: "7.0.0"),
-        .package(url: "https://github.com/OpenKitten/MongoKitten.git", from: "7.0.0")
+        .package(url: "https://github.com/OpenKitten/MongoKitten.git", from: "7.0.0"),
+        .package(url: "https://github.com/Kitura/Swift-SMTP", from: "5.1.0"),
     ],
     targets: [
         .target(
@@ -21,6 +22,7 @@ let package = Package(
                 .product(name: "JWT", package: "jwt"),
                 .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
                 .product(name: "MongoKitten", package: "MongoKitten"),
+                .product(name: "SwiftSMTP", package: "Swift-SMTP"),
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of
