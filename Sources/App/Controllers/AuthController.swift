@@ -22,11 +22,7 @@ struct AuthController: RouteCollection {
         let user = try await req.jwt.google.verify()
         if let email = user.email, let name = user.name {
             do {
-                let link = MongoDBManager(db: .users).connectionLink
-                let db = try await MongoDatabase.connect(
-                    to: link
-                )
-                let users = db[Database.UsersCollection.users.rawValue]
+                let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
                 if let userDoc = try await users.findOne(Database.UsersCollection.UsersField.email.rawValue == email) {
                     if let dbUser = User(document: userDoc) {
                         return dbUser
@@ -56,13 +52,8 @@ struct AuthController: RouteCollection {
         let tokenManager = TokenManager()
         do {
             let user = try tokenManager.getUser(fromReq: req)
-            let link = MongoDBManager(db: .users).connectionLink
-            let db = try await MongoDatabase.connect(
-                to: link
-            )
-            let users = db[Database.UsersCollection.users.rawValue]
-            try await users.deleteAll(where: Database.UsersCollection.UsersField.email.rawValue == user.email)
-            try await users.insert(user.getDocument())
+            let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
+            try await users.updateOne(where: Database.UsersCollection.UsersField.email.rawValue == user.email, to: user.getDocument())
         } catch {
             throw error
         }
@@ -70,28 +61,3 @@ struct AuthController: RouteCollection {
     }
     
 }
-
-/*
-GoogleIdentityToken(
-    issuer: JWTKit.IssuerClaim(
-        value: "https://accounts.google.com"
-    ), subject: JWTKit.SubjectClaim(
-        value: "112609587979113556392"
-    ), audience: JWTKit.AudienceClaim(
-        value: ["1070319083094-rhfna9ibe6pgrun9ag7f90ogbcdmcm95.apps.googleusercontent.com"]
-    ), authorizedPresenter: "1070319083094-rhfna9ibe6pgrun9ag7f90ogbcdmcm95.apps.googleusercontent.com",
-    issuedAt: JWTKit.IssuedAtClaim(value: 2022-12-25 12:20:20 +0000),
-    expires: JWTKit.ExpirationClaim(value: 2022-12-25 13:20:20 +0000),
-    atHash: Optional("JEtCnnxVu2GlbgZkcBTptg"),
-    hostedDomain: nil,
-    email: Optional("tolxpams@gmail.com"),
-    emailVerified: Optional(JWTKit.BoolClaim(value: true)),
-    name: Optional("Anatoliy Khramchenko"),
-    picture: Optional("https://lh3.googleusercontent.com/a/AEdFTp5u_m6W1MUyvUKrg8INJDr_fqwnzKdxNGx-49WM=s96-c"),
-    profile: nil,
-    givenName: Optional("Anatoliy"),
-    familyName: Optional("Khramchenko"),
-    locale: Optional(JWTKit.LocaleClaim(value: uk (fixed))),
-    nonce: Optional("RKBm6toDpB-O96pwWg6LYlTtE_zMo0jiEB1qxW-hLYI")
-)
-*/
