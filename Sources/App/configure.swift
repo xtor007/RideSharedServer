@@ -1,6 +1,5 @@
 import Vapor
 import JWT
-import Leaf
 
 // configures your application
 public func configure(_ app: Application) throws {
@@ -11,6 +10,14 @@ public func configure(_ app: Application) throws {
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     
     app.jwt.signers.use(.hs256(key: Enviroment.secretKey))
+    
+    for db in Database.allCases {
+        do {
+            Task {
+                try await DBManager.shared.connectDB(db)
+            }
+        }
+    }
     
     // register routes
     try routes(app)

@@ -22,11 +22,7 @@ struct AuthController: RouteCollection {
         let user = try await req.jwt.google.verify()
         if let email = user.email, let name = user.name {
             do {
-                let link = MongoDBManager(db: .users).connectionLink
-                let db = try await MongoDatabase.connect(
-                    to: link
-                )
-                let users = db[Database.UsersCollection.users.rawValue]
+                let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
                 if let userDoc = try await users.findOne(Database.UsersCollection.UsersField.email.rawValue == email) {
                     if let dbUser = User(document: userDoc) {
                         return dbUser
@@ -56,11 +52,7 @@ struct AuthController: RouteCollection {
         let tokenManager = TokenManager()
         do {
             let user = try tokenManager.getUser(fromReq: req)
-            let link = MongoDBManager(db: .users).connectionLink
-            let db = try await MongoDatabase.connect(
-                to: link
-            )
-            let users = db[Database.UsersCollection.users.rawValue]
+            let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
             try await users.deleteAll(where: Database.UsersCollection.UsersField.email.rawValue == user.email)
             try await users.insert(user.getDocument())
         } catch {

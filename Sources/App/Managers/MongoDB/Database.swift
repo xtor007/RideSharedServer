@@ -7,15 +7,31 @@
 
 import Foundation
 
-enum Database: String {
+protocol DBCollection {
+    var collectionName: String { get }
+}
+protocol DBDocument {
+    var fieldName: String { get }
+}
+
+enum Database: String, CaseIterable {
     
     case users = "users"
     
-    enum UsersCollection: String {
+    enum UsersCollection: String, DBCollection {
+
+        var collectionName: String {
+            return self.rawValue
+        }
         
         case users = "users"
         
-        enum UsersField: String {
+        enum UsersField: String, DBDocument {
+            
+            var fieldName: String {
+                return self.rawValue
+            }
+            
             case name = "name"
             case email = "email"
             case avatar = "avatar"
@@ -39,6 +55,7 @@ enum Database: String {
             case dateOfBirth = "dateOfBirth"
             case speedRating = "speedRating"
             case yourCarColorIndex = "yourCarColorIndex"
+            
         }
         
     }
