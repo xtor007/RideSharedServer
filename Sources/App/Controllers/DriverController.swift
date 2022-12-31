@@ -15,6 +15,7 @@ struct DriverController: RouteCollection {
         let driverRoutes = routes.grouped("driver")
         driverRoutes.post("driverConfirmed", use: driverConfirmed)
         driverRoutes.post("confirm", use: confirm)
+        driverRoutes.post("notConfirm", use: notConfirm)
     }
     
     func driverConfirmed(req: Request) async throws -> HTTPStatus {
@@ -35,6 +36,17 @@ struct DriverController: RouteCollection {
         do {
             let emailData = try req.content.decode(EmailData.self)
             let view = try await req.view.render(req.application.directory.publicDirectory + "success.html")
+            return Response(status: .ok, body: .init(buffer: view.data))
+        } catch {
+            print(error)
+            throw Abort(.conflict)
+        }
+    }
+    
+    func notConfirm(req: Request) async throws -> Response {
+        do {
+            let emailData = try req.content.decode(EmailData.self)
+            let view = try await req.view.render(req.application.directory.publicDirectory + "notSuccess.html")
             return Response(status: .ok, body: .init(buffer: view.data))
         } catch {
             print(error)

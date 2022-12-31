@@ -30,6 +30,10 @@ class MailManager {
                                 <input type="hidden" name="email" value="\(user.email)">
                                 <button>Confirm</button>
                             </form>
+                            <form action="\(Enviroment.selfLink)/driver/notConfirm" method="POST">
+                                <input type="hidden" name="email" value="\(user.email)">
+                                <button>Not confirm</button>
+                            </form>
                         """
         )
 
