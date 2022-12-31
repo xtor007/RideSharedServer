@@ -53,8 +53,7 @@ struct AuthController: RouteCollection {
         do {
             let user = try tokenManager.getUser(fromReq: req)
             let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
-            try await users.deleteAll(where: Database.UsersCollection.UsersField.email.rawValue == user.email)
-            try await users.insert(user.getDocument())
+            try await users.updateOne(where: Database.UsersCollection.UsersField.email.rawValue == user.email, to: user.getDocument())
         } catch {
             throw error
         }

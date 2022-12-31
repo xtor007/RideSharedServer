@@ -36,9 +36,17 @@ struct DriverController: RouteCollection {
         do {
             let emailData = try req.content.decode(EmailData.self)
             let view = try await req.view.render(req.application.directory.publicDirectory + "success.html")
+            try await updateDriverData(email: emailData.email, updatedUser: { user in
+                var newUser = user
+                guard var taxiData = user.taxiData else {
+                    throw Abort(.badRequest)
+                }
+                taxiData.isConfirmed = true
+                newUser.taxiData = taxiData
+                return newUser
+            })
             return Response(status: .ok, body: .init(buffer: view.data))
         } catch {
-            print(error)
             throw Abort(.conflict)
         }
     }
@@ -46,12 +54,30 @@ struct DriverController: RouteCollection {
     func notConfirm(req: Request) async throws -> Response {
         do {
             let emailData = try req.content.decode(EmailData.self)
-            let view = try await req.view.render(req.application.directory.publicDirectory + "notSuccess.html")
+            let view = try await req.view.render(req.application.directory.publicDirectory + "success.html")
+            try await updateDriverData(email: emailData.email) { user in
+                var newUser = user
+                newUser.taxiData = nil
+                return newUser
+            }
             return Response(status: .ok, body: .init(buffer: view.data))
         } catch {
-            print(error)
             throw Abort(.conflict)
         }
+    }
+    
+    func updateDriverData(email: String, updatedUser: @escaping (User) throws -> User) async throws {
+        let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
+        guard let userDoc = try await users.findOne(Database.UsersCollection.UsersField.email.fieldName == email) else {
+            throw Abort(.badRequest)
+        }
+        guard let user = User(document: userDoc) else {
+            throw Abort(.badRequest)
+        }
+        try await users.updateOne(
+            where: Database.UsersCollection.UsersField.email.fieldName == email,
+            to: updatedUser(user).getDocument()
+        )
     }
     
 }
