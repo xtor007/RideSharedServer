@@ -9,16 +9,12 @@ import Foundation
 import Vapor
 import MongoKitten
 
-struct EmailData: Content {
-    var email: String
-}
-
 struct DriverController: RouteCollection {
     
     func boot(routes: Vapor.RoutesBuilder) throws {
-        let authRoutes = routes.grouped("driver")
-        authRoutes.post("driverConfirmed", use: driverConfirmed)
-        authRoutes.post("confirm", use: confirm)
+        let driverRoutes = routes.grouped("driver")
+        driverRoutes.post("driverConfirmed", use: driverConfirmed)
+        driverRoutes.post("confirm", use: confirm)
     }
     
     func driverConfirmed(req: Request) async throws -> HTTPStatus {
@@ -35,14 +31,15 @@ struct DriverController: RouteCollection {
         return .ok
     }
     
-    func confirm(req: Request) async throws -> String {
+    func confirm(req: Request) async throws -> Response {
         do {
             let emailData = try req.content.decode(EmailData.self)
-            print(emailData.email)
+            let view = try await req.view.render(req.application.directory.publicDirectory + "success.html")
+            return Response(status: .ok, body: .init(buffer: view.data))
         } catch {
             print(error)
+            throw Abort(.conflict)
         }
-        return "EHOOOOOO"
     }
     
 }
