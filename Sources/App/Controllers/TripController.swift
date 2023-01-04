@@ -11,7 +11,7 @@ struct TripController: RouteCollection {
     
     func boot(routes: Vapor.RoutesBuilder) throws {
         let tripRoutes = routes.grouped("trip")
-        tripRoutes.post("getDriver", use: getDriver)
+        tripRoutes.get("getDriver", use: getDriver)
     }
     
     func getDriver(req: Request) async throws -> User {

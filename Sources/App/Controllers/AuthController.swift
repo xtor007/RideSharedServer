@@ -14,8 +14,8 @@ struct AuthController: RouteCollection {
     
     func boot(routes: Vapor.RoutesBuilder) throws {
         let authRoutes = routes.grouped("auth")
-        authRoutes.post("signIn", use: auth)
-        authRoutes.post("updateUser", use: updateUser)
+        authRoutes.get("signIn", use: auth)
+        authRoutes.get("updateUser", use: updateUser)
     }
     
     func auth(req: Request) async throws -> User {
