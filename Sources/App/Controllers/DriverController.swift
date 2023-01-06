@@ -13,7 +13,7 @@ struct DriverController: RouteCollection {
     
     func boot(routes: Vapor.RoutesBuilder) throws {
         let driverRoutes = routes.grouped("driver")
-        driverRoutes.post("driverConfirmed", use: driverConfirmed)
+        driverRoutes.get("driverConfirmed", use: driverConfirmed)
         driverRoutes.post("confirm", use: confirm)
         driverRoutes.post("notConfirm", use: notConfirm)
     }
