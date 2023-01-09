@@ -2,6 +2,7 @@ import Vapor
 import MongoKitten
 
 func routes(_ app: Application) throws {
+
     app.get { req async in
         "It works!"
     }
@@ -14,5 +15,6 @@ func routes(_ app: Application) throws {
     try app.register(collection: DriverController())
     try app.register(collection: TripController())
     try app.register(collection: HistoryController())
+    try app.register(collection: NeuralNetworkController())
     
 }

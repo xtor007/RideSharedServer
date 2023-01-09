@@ -25,14 +25,26 @@ class SearchManager {
         }
     }
     
-    func findDriver(forUser user: User) -> User? {
+    func findDriver(forUser user: User, location: SharedLocation) -> User? {
         if drivers.isEmpty {
             return nil
         }
-        drivers[0].callback(user)
-        let driver = drivers[0].user
-        removeDriver(drivers[0])
-        return driver
+        var maxValue = -1.0
+        var maxDriver: DriverData?
+        for driver in drivers {
+            if abs(driver.location.latitude - location.latitude) > 0.01 && abs(driver.location.longitude - location.longitude) > 0.01 {
+                continue
+            }
+            let predict = NeuralNetworkManager.shared.predict(x: NeuralNetworkManager.convertX(driver: driver.user, client: user))
+            if predict > maxValue {
+                maxValue = predict
+                maxDriver = driver
+            }
+        }
+        if let maxDriver {
+            removeDriver(maxDriver)
+        }
+        return maxDriver?.user
     }
     
 }

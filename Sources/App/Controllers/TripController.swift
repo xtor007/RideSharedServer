@@ -25,7 +25,7 @@ struct TripController: RouteCollection {
                 throw Abort(.badRequest)
             }
             let way = try req.content.decode(SharedWay.self)
-            guard let driver = SearchManager.shared.findDriver(forUser: user) else {
+            guard let driver = SearchManager.shared.findDriver(forUser: user, location: way.start) else {
                 throw Abort(.conflict)
             }
             return driver
