@@ -64,4 +64,104 @@ struct TripController: RouteCollection {
         }
     }
     
+    func confirmDriver(req: Request) async throws -> TripID {
+        let tokenManager = TokenManager()
+        do {
+            let user = try tokenManager.getUser(fromReq: req)
+            let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
+            guard let _ = try await users.findOne(Database.UsersCollection.UsersField.email.rawValue == user.email) else {
+                throw Abort(.badRequest)
+            }
+            let searchData = try req.content.decode(SearchDriverData.self)
+            var result = TripID(id: nil)
+            let semaphore = DispatchSemaphore(value: 0)
+            let timer = DispatchSource.makeTimerSource()
+            timer.setEventHandler() {
+                semaphore.signal()
+            }
+            timer.schedule(deadline: .now() + .seconds(60))
+            if #available(OSX 10.14.3,  *) {
+                timer.activate()
+            }
+            TripManager.shared.findDriver(
+                driver: searchData.driver,
+                client: user,
+                startLocation: searchData.way.start,
+                finishLocation: searchData.way.finish,
+                price: searchData.price
+            ) { id in
+                result.id = id
+                semaphore.signal()
+            }
+            semaphore.wait()
+            if result.id == nil {
+                TripManager.shared.removeMe(user: user)
+            }
+            return result
+        } catch {
+            throw error
+        }
+    }
+    
+    func confirmClient(req: Request) async throws -> TripID {
+        let tokenManager = TokenManager()
+        do {
+            let user = try tokenManager.getUser(fromReq: req)
+            let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
+            guard let _ = try await users.findOne(Database.UsersCollection.UsersField.email.rawValue == user.email) else {
+                throw Abort(.badRequest)
+            }
+            let searchData = try req.content.decode(SearchClientData.self)
+            var result = TripID(id: nil)
+            let semaphore = DispatchSemaphore(value: 0)
+            let timer = DispatchSource.makeTimerSource()
+            timer.setEventHandler() {
+                semaphore.signal()
+            }
+            timer.schedule(deadline: .now() + .seconds(60))
+            if #available(OSX 10.14.3,  *) {
+                timer.activate()
+            }
+            TripManager.shared.findClient(
+                driver: user,
+                client: searchData.client,
+                currentLocation: searchData.location
+            ) { id in
+                result.id = id
+                semaphore.signal()
+            }
+            semaphore.wait()
+            if result.id == nil {
+                TripManager.shared.removeMe(user: user)
+            }
+            return result
+        } catch {
+            throw error
+        }
+    }
+    
+    func getDriverLocation(req: Request) async throws -> SharedLocation {
+        let id = try req.content.decode(UUID.self)
+        guard let location = TripManager.shared.getDriverLocation(id: id) else {
+            throw Abort(.conflict)
+        }
+        return location
+    }
+    
+    func postDriverLocation(req: Request) async throws -> HTTPStatus {
+        let location = try req.content.decode(DriverLocation.self)
+        TripManager.shared.setDriverLocation(id: location.id, location: location.location)
+        return .ok
+    }
+    
+    func postRating(req: Request) async throws -> HTTPStatus {
+        let rating = try req.content.decode(Rating.self)
+        if let music = rating.music, let speed = rating.speed {
+            try await TripManager.shared.setRatingForDriver(id: rating.id, rating: rating.rating, music: music, speed: speed)
+        } else {
+            try await TripManager.shared.setRatingForClient(id: rating.id, clientRating: rating.rating)
+        }
+        return .ok
+    }
+    
 }

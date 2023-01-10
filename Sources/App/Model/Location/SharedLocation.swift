@@ -10,5 +10,5 @@ import Vapor
 struct SharedLocation: Content {
     let latitude: Double
     let longitude: Double
-    let description: String?
+    var description: String?
 }

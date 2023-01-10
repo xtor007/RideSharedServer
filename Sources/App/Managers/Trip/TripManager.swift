@@ -103,18 +103,22 @@ class TripManager {
             driverSideRating.removeValue(forKey: id)
             let tripData = trips[id]!
             trips.removeValue(forKey: id)
-            try await saveTrip(Trip(
-                driverEmail: tripData.driver.email,
-                clientEmail: tripData.client.email,
-                status: 1,
-                date: .now,
-                clientRating: clientRating,
-                rating: rating,
-                music: music,
-                speed: speed,
-                start: tripData.startLocation.description,
-                finish: tripData.finishLocation.description
-            ))
+            try await saveTrip(
+                Trip(
+                    driverEmail: tripData.driver.email,
+                    clientEmail: tripData.client.email,
+                    status: 1,
+                    date: .now,
+                    clientRating: clientRating,
+                    rating: rating,
+                    music: music,
+                    speed: speed,
+                    start: tripData.startLocation.description,
+                    finish: tripData.finishLocation.description
+                ),
+                client: tripData.client,
+                driver: tripData.driver
+            )
         } else {
             clientSideRating[id] = (rating, music, speed)
         }
@@ -125,26 +129,52 @@ class TripManager {
             clientSideRating.removeValue(forKey: id)
             let tripData = trips[id]!
             trips.removeValue(forKey: id)
-            try await saveTrip(Trip(
-                driverEmail: tripData.driver.email,
-                clientEmail: tripData.client.email,
-                status: 1,
-                date: .now,
-                clientRating: clientRating,
-                rating: rating,
-                music: music,
-                speed: speed,
-                start: tripData.startLocation.description,
-                finish: tripData.finishLocation.description
-            ))
+            try await saveTrip(
+                Trip(
+                    driverEmail: tripData.driver.email,
+                    clientEmail: tripData.client.email,
+                    status: 1,
+                    date: .now,
+                    clientRating: clientRating,
+                    rating: rating,
+                    music: music,
+                    speed: speed,
+                    start: tripData.startLocation.description,
+                    finish: tripData.finishLocation.description
+                ),
+                client: tripData.client,
+                driver: tripData.driver
+            )
         } else {
             driverSideRating[id] = clientRating
         }
     }
     
-    private func saveTrip(_ trip: Trip) async throws {
+    private func saveTrip(_ trip: Trip, client: User, driver: User) async throws {
         let trips = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.trips)
         try await trips.insert(trip.getDocument())
+        let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
+        var newClient = client
+        if let clientRating = trip.clientRating {
+            newClient.rating = countNewRating(oldRating: newClient.rating, newRating: clientRating, oldCount: newClient.tripCount)
+            newClient.tripCount += 1
+        }
+        try await users.updateOne(where: Database.UsersCollection.UsersField.email.rawValue == newClient.email, to: newClient.getDocument())
+        var newDriver = driver
+        if let rating = trip.rating, let music = trip.music, let speed = trip.speed, var taxiData = newDriver.taxiData {
+            newDriver.rating = countNewRating(oldRating: newDriver.rating, newRating: rating, oldCount: newDriver.tripCount)
+            newDriver.tripCount += 1
+            taxiData.musicRating = countNewRating(oldRating: taxiData.musicRating, newRating: music, oldCount: taxiData.taxiTripCount)
+            taxiData.speedRating = countNewRating(oldRating: taxiData.speedRating, newRating: speed, oldCount: taxiData.taxiTripCount)
+            taxiData.taxiTripCount += 1
+            newDriver.taxiData = taxiData
+        }
+        try await users.updateOne(where: Database.UsersCollection.UsersField.email.rawValue == newDriver.email, to: newDriver.getDocument())
+    }
+    
+    private func countNewRating(oldRating: Double, newRating: Double, oldCount: Int) -> Double {
+        let oldRatingCoef = (Double(oldCount) / Double(oldCount + 1)) * oldRating
+        return oldRatingCoef + newRating / Double(oldCount + 1)
     }
     
 }
