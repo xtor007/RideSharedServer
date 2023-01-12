@@ -42,6 +42,7 @@ class SearchManager {
             }
         }
         if let maxDriver {
+            maxDriver.callback(user)
             removeDriver(maxDriver)
         }
         return maxDriver?.user

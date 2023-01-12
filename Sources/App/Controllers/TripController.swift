@@ -14,6 +14,11 @@ struct TripController: RouteCollection {
         let tripRoutes = routes.grouped("trip")
         tripRoutes.post("getDriver", use: getDriver)
         tripRoutes.post("getClient", use: getClient)
+        tripRoutes.post("confirmDriver", use: confirmDriver)
+        tripRoutes.post("confirmClient", use: confirmClient)
+        tripRoutes.post("getDriverLocation", use: getDriverLocation)
+        tripRoutes.post("postDriverLocation", use: postDriverLocation)
+        tripRoutes.post("postRating", use: postRating)
     }
     
     func getDriver(req: Request) async throws -> User {
@@ -79,7 +84,7 @@ struct TripController: RouteCollection {
             timer.setEventHandler() {
                 semaphore.signal()
             }
-            timer.schedule(deadline: .now() + .seconds(60))
+            timer.schedule(deadline: .now() + .seconds(40))
             if #available(OSX 10.14.3,  *) {
                 timer.activate()
             }
