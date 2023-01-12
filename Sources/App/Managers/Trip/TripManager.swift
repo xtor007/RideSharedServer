@@ -98,6 +98,13 @@ class TripManager {
         trips[id]?.driverLocation = location
     }
     
+    func getTripData(id: UUID) -> SharedWay? {
+        guard let trip = trips[id] else {
+            return nil
+        }
+        return SharedWay(start: trip.startLocation, finish: trip.finishLocation)
+    }
+    
     func setRatingForDriver(id: UUID, rating: Double, music: Double, speed: Double) async throws {
         if let clientRating = driverSideRating[id] {
             driverSideRating.removeValue(forKey: id)

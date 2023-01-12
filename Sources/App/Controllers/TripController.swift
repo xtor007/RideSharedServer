@@ -16,6 +16,7 @@ struct TripController: RouteCollection {
         tripRoutes.post("getClient", use: getClient)
         tripRoutes.post("confirmDriver", use: confirmDriver)
         tripRoutes.post("confirmClient", use: confirmClient)
+        tripRoutes.post("getWay", use: getWay)
         tripRoutes.post("getDriverLocation", use: getDriverLocation)
         tripRoutes.post("postDriverLocation", use: postDriverLocation)
         tripRoutes.post("postRating", use: postRating)
@@ -143,6 +144,14 @@ struct TripController: RouteCollection {
         } catch {
             throw error
         }
+    }
+    
+    func getWay(req: Request) async throws -> SharedWay {
+        let id = try req.content.decode(UUID.self)
+        guard let way = TripManager.shared.getTripData(id: id) else {
+            throw Abort(.conflict)
+        }
+        return way
     }
     
     func getDriverLocation(req: Request) async throws -> SharedLocation {
