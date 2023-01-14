@@ -9,7 +9,7 @@ import Vapor
 import MongoKitten
 
 struct TripController: RouteCollection {
-    
+
     func boot(routes: Vapor.RoutesBuilder) throws {
         let tripRoutes = routes.grouped("trip")
         tripRoutes.post("getDriver", use: getDriver)
@@ -21,7 +21,7 @@ struct TripController: RouteCollection {
         tripRoutes.post("postDriverLocation", use: postDriverLocation)
         tripRoutes.post("postRating", use: postRating)
     }
-    
+
     func getDriver(req: Request) async throws -> User {
         let tokenManager = TokenManager()
         do {
@@ -39,7 +39,7 @@ struct TripController: RouteCollection {
             throw error
         }
     }
-    
+
     func getClient(req: Request) async throws -> OptionalUser {
         let tokenManager = TokenManager()
         do {
@@ -69,7 +69,7 @@ struct TripController: RouteCollection {
             throw error
         }
     }
-    
+
     func confirmDriver(req: Request) async throws -> TripID {
         let tokenManager = TokenManager()
         do {
@@ -108,7 +108,7 @@ struct TripController: RouteCollection {
             throw error
         }
     }
-    
+
     func confirmClient(req: Request) async throws -> TripID {
         let tokenManager = TokenManager()
         do {
@@ -145,7 +145,7 @@ struct TripController: RouteCollection {
             throw error
         }
     }
-    
+
     func getWay(req: Request) async throws -> SharedWay {
         let id = try req.content.decode(UUID.self)
         guard let way = TripManager.shared.getTripData(id: id) else {
@@ -153,7 +153,7 @@ struct TripController: RouteCollection {
         }
         return way
     }
-    
+
     func getDriverLocation(req: Request) async throws -> SharedLocation {
         let id = try req.content.decode(UUID.self)
         guard let location = TripManager.shared.getDriverLocation(id: id) else {
@@ -161,13 +161,13 @@ struct TripController: RouteCollection {
         }
         return location
     }
-    
+
     func postDriverLocation(req: Request) async throws -> HTTPStatus {
         let location = try req.content.decode(DriverLocation.self)
         TripManager.shared.setDriverLocation(id: location.id, location: location.location)
         return .ok
     }
-    
+
     func postRating(req: Request) async throws -> HTTPStatus {
         let rating = try req.content.decode(Rating.self)
         if let music = rating.music, let speed = rating.speed {
@@ -177,5 +177,5 @@ struct TripController: RouteCollection {
         }
         return .ok
     }
-    
+
 }

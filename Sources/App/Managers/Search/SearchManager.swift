@@ -8,23 +8,23 @@
 import Foundation
 
 class SearchManager {
-    
+
     static let shared = SearchManager()
-    
+
     private(set) var drivers = [DriverData]()
-    
+
     private init() {}
-    
+
     func addDriver(_ data: DriverData) {
         drivers.append(data)
     }
-    
+
     func removeDriver(_ data: DriverData) {
         drivers.removeAll { driverData in
             driverData.user.email == data.user.email
         }
     }
-    
+
     func findDriver(forUser user: User, location: SharedLocation) -> User? {
         if drivers.isEmpty {
             return nil
@@ -47,5 +47,5 @@ class SearchManager {
         }
         return maxDriver?.user
     }
-    
+
 }

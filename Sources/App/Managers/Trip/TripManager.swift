@@ -10,19 +10,19 @@ import Vapor
 import MongoKitten
 
 class TripManager {
-    
+
     static let shared = TripManager()
-    
+
     var trips = [UUID: TripData]()
-    
+
     var waitingUsers = [WaitingUser]()
     var waitingDrivers = [WaitingDriver]()
-    
+
     var clientSideRating = [UUID: (Double, Double, Double)]()
     var driverSideRating = [UUID: Double]()
-    
+
     private init() {}
-    
+
     func findDriver(driver: User, client: User, startLocation: SharedLocation, finishLocation: SharedLocation, price: Double, callback: @escaping (UUID) -> Void) {
         let driverData = waitingDrivers.first(where: { waitingDriver in
             waitingDriver.user.email == driver.email
@@ -52,7 +52,7 @@ class TripManager {
             ))
         }
     }
-    
+
     func findClient(driver: User, client: User, currentLocation: SharedLocation, callback: @escaping (UUID) -> Void) {
         let clientData = waitingUsers.first(where: { waitingUser in
             waitingUser.user.email == client.email
@@ -80,7 +80,7 @@ class TripManager {
             ))
         }
     }
-    
+
     func removeMe(user: User) {
         waitingUsers.removeAll { waitingUser in
             waitingUser.user.email == user.email
@@ -89,22 +89,22 @@ class TripManager {
             waitingDriver.user.email == user.email
         }
     }
-    
+
     func getDriverLocation(id: UUID) -> SharedLocation? {
         return trips[id]?.driverLocation
     }
-    
+
     func setDriverLocation(id: UUID, location: SharedLocation) {
         trips[id]?.driverLocation = location
     }
-    
+
     func getTripData(id: UUID) -> SharedWay? {
         guard let trip = trips[id] else {
             return nil
         }
         return SharedWay(start: trip.startLocation, finish: trip.finishLocation)
     }
-    
+
     func setRatingForDriver(id: UUID, rating: Double, music: Double, speed: Double) async throws {
         if let clientRating = driverSideRating[id] {
             driverSideRating.removeValue(forKey: id)
@@ -130,7 +130,7 @@ class TripManager {
             clientSideRating[id] = (rating, music, speed)
         }
     }
-    
+
     func setRatingForClient(id: UUID, clientRating: Double) async throws {
         if let (rating, music, speed) = clientSideRating[id] {
             clientSideRating.removeValue(forKey: id)
@@ -156,7 +156,7 @@ class TripManager {
             driverSideRating[id] = clientRating
         }
     }
-    
+
     private func saveTrip(_ trip: Trip, client: User, driver: User) async throws {
         let trips = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.trips)
         try await trips.insert(trip.getDocument())
@@ -178,10 +178,10 @@ class TripManager {
         }
         try await users.updateOne(where: Database.UsersCollection.UsersField.email.rawValue == newDriver.email, to: newDriver.getDocument())
     }
-    
+
     private func countNewRating(oldRating: Double, newRating: Double, oldCount: Int) -> Double {
         let oldRatingCoef = (Double(oldCount) / Double(oldCount + 1)) * oldRating
         return oldRatingCoef + newRating / Double(oldCount + 1)
     }
-    
+
 }

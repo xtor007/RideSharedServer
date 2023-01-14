@@ -9,12 +9,12 @@ import Vapor
 import MongoKitten
 
 struct HistoryController: RouteCollection {
-    
+
     func boot(routes: Vapor.RoutesBuilder) throws {
         let historyRoutes = routes.grouped("history")
         historyRoutes.get("getAllTrips", use: getAllTrips)
     }
-    
+
     func getAllTrips(req: Request) async throws -> [Trip] {
         let tokenManager = TokenManager()
         do {
@@ -32,5 +32,5 @@ struct HistoryController: RouteCollection {
             throw error
         }
     }
-    
+
 }

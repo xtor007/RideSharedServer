@@ -15,24 +15,24 @@ protocol DBDocument {
 }
 
 enum Database: String, CaseIterable {
-    
+
     case users = "users"
-    
+
     enum UsersCollection: String, DBCollection {
 
         var collectionName: String {
             return self.rawValue
         }
-        
+
         case users = "users"
         case trips = "trips"
-        
+
         enum UsersField: String, DBDocument {
-            
+
             var fieldName: String {
                 return self.rawValue
             }
-            
+
             case name = "name"
             case email = "email"
             case avatar = "avatar"
@@ -56,15 +56,15 @@ enum Database: String, CaseIterable {
             case dateOfBirth = "dateOfBirth"
             case speedRating = "speedRating"
             case yourCarColorIndex = "yourCarColorIndex"
-            
+
         }
-        
+
         enum TripField: String, DBDocument {
-            
+
             var fieldName: String {
                 return self.rawValue
             }
-            
+
             case driverEmail = "driverEmail"
             case clientEmail = "clientEmail"
             case status = "status"
@@ -76,9 +76,9 @@ enum Database: String, CaseIterable {
             case start = "start"
             case finish = "finish"
             case price = "price"
-            
+
         }
-        
+
     }
-    
+
 }

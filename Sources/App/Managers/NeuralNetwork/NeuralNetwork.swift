@@ -8,16 +8,16 @@
 import Foundation
 
 class NeuralNetwork {
-    
+
     private var weights: [Double]
     private var b = 0.1
-    
+
     private let learningRate = 0.2
-    
+
     init(inCount: Int) {
         self.weights = Array(repeating: 0.5, count: inCount)
     }
-    
+
     func predict(x: [Double]) -> Double {
         if x.count != weights.count {
             return 0
@@ -28,7 +28,7 @@ class NeuralNetwork {
         }
         return sigmoid(sum + b)
     }
-    
+
     func optimizer(x: [Double], error: Double) {
         if x.count != weights.count {
             return
@@ -38,9 +38,9 @@ class NeuralNetwork {
         }
         b -= error * learningRate
     }
-    
+
     private func sigmoid(_ x: Double) -> Double {
         return 1 / (1 + exp(-x))
     }
-    
+
 }

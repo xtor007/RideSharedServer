@@ -24,7 +24,7 @@ struct Trip: Content {
 }
 
 extension Trip {
-    
+
     init?(document: Document) {
         guard let driverEmail = document[Database.UsersCollection.TripField.driverEmail.fieldName] as? String else {
             return nil
@@ -52,7 +52,7 @@ extension Trip {
             price: document[Database.UsersCollection.TripField.price.fieldName] as? Double
         )
     }
-    
+
     func getDocument() ->  Document {
         var document: Document = [:]
         document[Database.UsersCollection.TripField.driverEmail.rawValue] = driverEmail
@@ -82,5 +82,5 @@ extension Trip {
         }
         return document
     }
-    
+
 }

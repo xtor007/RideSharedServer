@@ -8,9 +8,9 @@
 import Vapor
 
 class TokenManager {
-    
+
     func getUser(fromReq req: Request) throws -> User {
-        if let authorizationHeader = req.headers.bearerAuthorization{
+        if let authorizationHeader = req.headers.bearerAuthorization {
             let jwt = authorizationHeader.token.replacingOccurrences(of: "Bearer ", with: "")
             let jwtComponents = jwt.components(separatedBy: ".")
             let payload = jwtComponents[1]
@@ -28,5 +28,5 @@ class TokenManager {
             throw Abort(.badRequest)
         }
     }
-    
+
 }

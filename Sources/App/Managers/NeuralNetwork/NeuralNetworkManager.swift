@@ -8,15 +8,15 @@
 import Foundation
 
 class NeuralNetworkManager {
-    
+
     static let shared = NeuralNetworkManager()
-    
+
     private var neuralNetwork: NeuralNetwork?
-    
+
     private let epochsCount = 100000
-    
+
     private init() {}
-    
+
     static func convertX(driver: User, client: User) -> [Double] {
         guard let parameters = client.selectionParametrs, let taxiData = driver.taxiData else {
             return Array(repeating: 0, count: 6)
@@ -48,14 +48,14 @@ class NeuralNetworkManager {
         }
         return result
     }
-    
+
     static func convertY(trip: Trip) -> Double {
         guard let ratingClient = trip.rating, let rating = trip.rating, let music = trip.music, let speed = trip.speed else {
             return 0
         }
         return (ratingClient + rating + music + speed) / 20
     }
-    
+
     func train(x: [[Double]], y: [Double]) {
         let neuralNetwork = NeuralNetwork(inCount: x[0].count)
         for epoch in 0..<epochsCount {
@@ -70,12 +70,12 @@ class NeuralNetworkManager {
         }
         self.neuralNetwork = neuralNetwork
     }
-    
+
     func predict(x: [Double]) -> Double {
         guard let neuralNetwork else {
             return 0
         }
         return neuralNetwork.predict(x: x)
     }
-    
+
 }

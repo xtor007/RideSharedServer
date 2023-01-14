@@ -24,7 +24,7 @@ struct SelectionParametrs: Content {
 }
 
 extension SelectionParametrs {
-    
+
     init?(document: Document) {
         guard let musicalPrioritet = document[Database.UsersCollection.UsersField.musicalPrioritet.rawValue] as? Int else {
             return nil
@@ -55,7 +55,7 @@ extension SelectionParametrs {
             colorPrioritet: colorPrioritet
         )
     }
-    
+
     func getDocumentDescription() ->  [String:Primitive] {
         var document = [String:Primitive]()
         if let musicalPreferences {
@@ -83,5 +83,5 @@ extension SelectionParametrs {
         document[Database.UsersCollection.UsersField.colorPrioritet.rawValue] = colorPrioritet
         return document
     }
-    
+
 }

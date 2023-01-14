@@ -20,7 +20,7 @@ struct TaxiData: Content {
 }
 
 extension TaxiData {
-    
+
     init?(document: Document) {
         guard let isConfirmed = document[Database.UsersCollection.UsersField.isConfirmed.rawValue] as? Bool else {
             return nil
@@ -53,7 +53,7 @@ extension TaxiData {
             yourCarColorIndex: yourCarColorIndex
         )
     }
-    
+
     func getDocumentDescription() ->  [String:Primitive] {
         var document = [String:Primitive]()
         document[Database.UsersCollection.UsersField.isConfirmed.rawValue] = isConfirmed
@@ -65,5 +65,5 @@ extension TaxiData {
         document[Database.UsersCollection.UsersField.yourCarColorIndex.rawValue] = yourCarColorIndex
         return document
     }
-    
+
 }

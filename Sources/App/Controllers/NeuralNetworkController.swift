@@ -9,13 +9,13 @@ import Vapor
 import MongoKitten
 
 struct NeuralNetworkController: RouteCollection {
-    
+
     func boot(routes: Vapor.RoutesBuilder) throws {
         let neuralRoutes = routes.grouped("neural")
         neuralRoutes.get("train", use: train)
         neuralRoutes.get("testDrivers", use: addTestDrivers)
     }
-    
+
     func train(req: Request) async throws -> String {
         let trips = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.trips)
         let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
@@ -51,7 +51,7 @@ struct NeuralNetworkController: RouteCollection {
         }
         return "MSE = \(mse / Double(x.count))"
     }
-    
+
     func addTestDrivers(req: Request) async throws -> String {
         let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
         for driverIndex in 1...4 {
@@ -71,5 +71,5 @@ struct NeuralNetworkController: RouteCollection {
         }
         return "Drivers was added"
     }
-    
+
 }
