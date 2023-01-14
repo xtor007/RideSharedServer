@@ -20,7 +20,7 @@ struct User: Content {
 }
 
 extension User {
-    
+
     init?(document: Document) {
         guard let name = document[Database.UsersCollection.UsersField.name.rawValue] as? String else {
             return nil
@@ -44,7 +44,7 @@ extension User {
             taxiData: TaxiData(document: document)
         )
     }
-    
+
     func getDocument() ->  Document {
         var document: Document = [:]
         document[Database.UsersCollection.UsersField.name.rawValue] = name
@@ -68,5 +68,5 @@ extension User {
         }
         return document
     }
-    
+
 }

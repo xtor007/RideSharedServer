@@ -11,13 +11,13 @@ import JWT
 import MongoKitten
 
 struct AuthController: RouteCollection {
-    
+
     func boot(routes: Vapor.RoutesBuilder) throws {
         let authRoutes = routes.grouped("auth")
-        authRoutes.post("signIn", use: auth)
-        authRoutes.post("updateUser", use: updateUser)
+        authRoutes.get("signIn", use: auth)
+        authRoutes.get("updateUser", use: updateUser)
     }
-    
+
     func auth(req: Request) async throws -> User {
         let user = try await req.jwt.google.verify()
         if let email = user.email, let name = user.name {
@@ -47,7 +47,7 @@ struct AuthController: RouteCollection {
             throw Abort(.badRequest, reason: "This account haven't email or name")
         }
     }
-    
+
     func updateUser(req: Request) async throws -> HTTPStatus {
         let tokenManager = TokenManager()
         do {
@@ -59,5 +59,5 @@ struct AuthController: RouteCollection {
         }
         return .ok
     }
-    
+
 }

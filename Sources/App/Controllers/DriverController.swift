@@ -10,14 +10,14 @@ import Vapor
 import MongoKitten
 
 struct DriverController: RouteCollection {
-    
+
     func boot(routes: Vapor.RoutesBuilder) throws {
         let driverRoutes = routes.grouped("driver")
-        driverRoutes.post("driverConfirmed", use: driverConfirmed)
+        driverRoutes.get("driverConfirmed", use: driverConfirmed)
         driverRoutes.post("confirm", use: confirm)
         driverRoutes.post("notConfirm", use: notConfirm)
     }
-    
+
     func driverConfirmed(req: Request) async throws -> HTTPStatus {
         let tokenManager = TokenManager()
         do {
@@ -37,7 +37,7 @@ struct DriverController: RouteCollection {
         }
         return .ok
     }
-    
+
     func confirm(req: Request) async throws -> Response {
         do {
             let emailData = try req.content.decode(EmailData.self)
@@ -56,7 +56,7 @@ struct DriverController: RouteCollection {
             throw Abort(.conflict)
         }
     }
-    
+
     func notConfirm(req: Request) async throws -> Response {
         do {
             let emailData = try req.content.decode(EmailData.self)
@@ -71,7 +71,7 @@ struct DriverController: RouteCollection {
             throw Abort(.conflict)
         }
     }
-    
+
     func updateDriverData(email: String, updatedUser: @escaping (User) throws -> User) async throws {
         let users = try DBManager.shared.getMongoCollection(db: .users, collection: Database.UsersCollection.users)
         guard let userDoc = try await users.findOne(Database.UsersCollection.UsersField.email.fieldName == email) else {
@@ -85,5 +85,5 @@ struct DriverController: RouteCollection {
             to: updatedUser(user).getDocument()
         )
     }
-    
+
 }

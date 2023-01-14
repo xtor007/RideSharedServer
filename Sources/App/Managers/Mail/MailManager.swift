@@ -10,18 +10,18 @@ import SwiftSMTP
 import Vapor
 
 class MailManager {
-    
+
     let smtp = SMTP(
         hostname: "smtp.gmail.com",
         email: Enviroment.senderEmail,
         password: Enviroment.senderPassword
     )
     let admin = Mail.User(name: "Admin", email: Enviroment.adminEmail)
-    
+
     func sendConfirmedMail(user: User, onError: @escaping (Error) -> Void) {
-        
+
         let userMail = Mail.User(name: user.name, email: user.email)
-        
+
         let htmlAttachment = Attachment(
             htmlContent: """
                             <p>Hello!</p>
@@ -50,7 +50,7 @@ class MailManager {
                 onError(error)
             }
         }
-        
+
     }
-    
+
 }
