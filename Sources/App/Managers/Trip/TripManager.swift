@@ -121,7 +121,8 @@ class TripManager {
                     music: music,
                     speed: speed,
                     start: tripData.startLocation.description,
-                    finish: tripData.finishLocation.description
+                    finish: tripData.finishLocation.description,
+                    price: tripData.price
                 ),
                 client: tripData.client,
                 driver: tripData.driver
@@ -147,7 +148,8 @@ class TripManager {
                     music: music,
                     speed: speed,
                     start: tripData.startLocation.description,
-                    finish: tripData.finishLocation.description
+                    finish: tripData.finishLocation.description,
+                    price: tripData.price
                 ),
                 client: tripData.client,
                 driver: tripData.driver
